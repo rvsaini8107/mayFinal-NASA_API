@@ -1,18 +1,26 @@
 var url = `https://api.nasa.gov/planetary/apod?api_key=LCc8yC3V8qH2zpKDNlqx2G9jEKIw2kwPOhuNCX2a&date=`;
+const loadingElement = document.getElementById('loading');
+
 getCurrentImageOfTheDay();
 //  fetch the data for the current date
+
+loadingElement.style.display = 'block';
+
 function getCurrentImageOfTheDay(){
     const currentDate = new Date().toISOString().split("T")[0];
     
     var playWithData = fetchData(url,currentDate)//play with waiting  
     playWithData.then(responseData=>responseData.json())
     .then(data=>{
-        
+        loadingElement.style.display = 'none';
         displayMethod(data,"NASA Picture Of The Day")
         addSearchToHistory(getDataLocalStorage);
         document.getElementById("input-date").setAttribute("max",currentDate)
     })
-    .catch(error=>console.log("data not Found Error"));
+    .catch(error=>{
+        loadingElement.style.display = 'none';
+        console.log("data not Found Error")
+    });
     
 }
 
@@ -46,13 +54,14 @@ async function fetchData(url,date){
 // fetch the data for the selected date
 
 function getImageOfTheDay(event){
-    event.preventDefault(); //page not refresh 
+    event.preventDefault(); //page not refresh
+    loadingElement.style.display = 'block'; 
 
     const inputDate = document.getElementById("input-date").value;
     var playWithData = fetchData(url,inputDate)//play with waiting  
     playWithData.then(responseData=>responseData.json())
     .then(data=>{
-        
+        loadingElement.style.display = 'none';
         displayMethod(data,`Picture On ${data.date}`)
         // save date in localStorage
         let dateThis = {
@@ -103,10 +112,12 @@ function addSearchToHistory(localStorageData){
     
 }
 function showThatDate(date){
+    loadingElement.style.display = 'block';
     var playWithData = fetchData(url,date)//play with waiting  
     playWithData.then(responseData=>responseData.json())
     .then(data=>{
         
+        loadingElement.style.display = 'none';
         displayMethod(data,`Picture On ${data.date}`)
         // save date in localStorage
         let dateThis = {
